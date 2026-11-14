@@ -2,18 +2,21 @@
   "method": {
     "title": "AZTEC translational biomarkers: reproduction",
     "question": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?",
-    "findings": []
+    "findings": [
+      "Figure 3, the TILs ROC and the logistic model reproduce exactly from the deposited Rmd and source data",
+      "Figure 4 and S5 differ: the deposited data give 42 Cycle 1 patients in the clinical-benefit set, the authors' rendering shows 43, so every Cycle 1 p-value shifts"
+    ]
   },
   "inputs": [],
   "run": "bash run.sh",
   "results_dir": "figures",
   "steps": [
     {
-      "id": "run-rscript-1",
+      "id": "run-rscript-2",
       "title": "Run Rscript",
-      "script": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
+      "script": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"figures/AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
       "produces": [
-        "AZTEC_translational_biomarkers.md",
+        "figures/AZTEC_translational_biomarkers.md",
         "figures/knit-unnamed-chunk-10-1.png",
         "figures/knit-unnamed-chunk-11-1.png",
         "figures/knit-unnamed-chunk-12-1.png",
@@ -48,6 +51,10 @@
     }
   ],
   "outputs": [
+    {
+      "path": "AZTEC_translational_biomarkers.md",
+      "compare": "exact"
+    },
     {
       "path": "AZTEC_translational_biomarkers.md",
       "compare": "exact"

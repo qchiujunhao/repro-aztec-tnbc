@@ -1,6 +1,6 @@
 # Analysis graph
 
-Generated 2026-11-14T18:34:29Z by whatran.py/0.4.0. Main path only; rejected branches and unlinked executions are kept in `graph.json`.
+Generated 2026-11-14T22:57:01Z by whatran.py/0.4.0. Main path only; rejected branches and unlinked executions are kept in `graph.json`.
 
 ```mermaid
 flowchart TD
@@ -38,6 +38,8 @@ flowchart TD
   n31["Run Rscript"]
   n32(["Figure 3, the TILs ROC and the logistic model reproduce exac"])
   n33(["Figure 4 and S5 differ: the deposited data give 42 Cycle 1 p"])
+  n34[/"AZTEC_translational_biomarkers.md"/]
+  n35["Run Rscript"]
   n31 --> n0
   n31 --> n1
   n31 --> n2
@@ -69,6 +71,37 @@ flowchart TD
   n31 --> n28
   n31 --> n29
   n31 --> n30
+  n35 --> n34
+  n35 --> n1
+  n35 --> n2
+  n35 --> n3
+  n35 --> n4
+  n35 --> n5
+  n35 --> n6
+  n35 --> n7
+  n35 --> n8
+  n35 --> n9
+  n35 --> n10
+  n35 --> n11
+  n35 --> n12
+  n35 --> n13
+  n35 --> n14
+  n35 --> n15
+  n35 --> n16
+  n35 --> n17
+  n35 --> n18
+  n35 --> n19
+  n35 --> n20
+  n35 --> n21
+  n35 --> n22
+  n35 --> n23
+  n35 --> n24
+  n35 --> n25
+  n35 --> n26
+  n35 --> n27
+  n35 --> n28
+  n35 --> n29
+  n35 --> n30
   n1 -.-> n32
   n7 -.-> n33
 ```

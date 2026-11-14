@@ -1,3 +1,4 @@
 .Rlib/
 site/
 analysis/.state/
+.venv/

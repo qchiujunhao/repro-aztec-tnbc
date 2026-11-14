@@ -12,11 +12,11 @@
   "results_dir": "figures",
   "steps": [
     {
-      "id": "run-rscript-1",
+      "id": "run-rscript-2",
       "title": "Run Rscript",
-      "script": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
+      "script": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"figures/AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
       "produces": [
-        "AZTEC_translational_biomarkers.md",
+        "figures/AZTEC_translational_biomarkers.md",
         "figures/knit-unnamed-chunk-10-1.png",
         "figures/knit-unnamed-chunk-11-1.png",
         "figures/knit-unnamed-chunk-12-1.png",
@@ -51,6 +51,10 @@
     }
   ],
   "outputs": [
+    {
+      "path": "AZTEC_translational_biomarkers.md",
+      "compare": "exact"
+    },
     {
       "path": "AZTEC_translational_biomarkers.md",
       "compare": "exact"
@@ -176,5 +180,5 @@
       "compare": "exists"
     }
   ],
-  "generated": "whatran 0.4.0 0a8423576d90"
+  "generated": "whatran 0.4.0 bbb8b502c29e"
 }

@@ -1,7 +1,7 @@
 {
   "format": "analysis-graph/0.1",
   "generator": "whatran.py/0.4.0",
-  "generated_at": "2026-11-14T18:34:29Z",
+  "generated_at": "2026-11-14T22:57:01Z",
   "project": {
     "name": "AZTEC translational biomarkers: reproduction",
     "description": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?"
@@ -20,7 +20,7 @@
       "role": "result",
       "generated_by": "run-run-rscript-1",
       "used_by": [],
-      "integrity": "intact",
+      "integrity": "missing",
       "on_main_path": true
     },
     {
@@ -34,7 +34,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -50,7 +50,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -66,7 +66,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -82,7 +82,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -98,7 +98,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -114,7 +114,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -130,7 +130,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -146,7 +146,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -162,7 +162,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -178,7 +178,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -194,7 +194,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -210,7 +210,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -226,7 +226,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -242,7 +242,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -258,7 +258,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -274,7 +274,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -290,7 +290,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -306,7 +306,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -322,7 +322,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -338,7 +338,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -354,7 +354,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -370,7 +370,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -386,7 +386,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -402,7 +402,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -418,7 +418,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -434,7 +434,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -450,7 +450,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -466,7 +466,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -482,7 +482,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -498,7 +498,7 @@
       "recorded_at": "2026-11-14T18:34:28Z",
       "recorded_by": "claude-code",
       "role": "result",
-      "generated_by": "run-run-rscript-1",
+      "generated_by": "run-run-rscript-2",
       "used_by": [],
       "integrity": "intact",
       "on_main_path": true
@@ -544,7 +544,7 @@
         "art-knit-unnamed-chunk-8-1-png-1",
         "art-knit-unnamed-chunk-9-1-png-1"
       ],
-      "status": "completed",
+      "status": "superseded",
       "evidence": {
         "level": "observed",
         "exec_ids": [
@@ -603,6 +603,8 @@
       "auto": {
         "label_from": "command"
       },
+      "status_reason": "superseded by run-run-rscript-2",
+      "status_changed_at": "2026-11-14T22:56:46Z",
       "on_main_path": true
     },
     {
@@ -629,6 +631,133 @@
       "recorded_by": "claude-code",
       "note": "Baseline (45) and Cycle 3 (37) match the authors' figure; one Cycle 1 row present in the authors' data is absent from Source Data.xlsx. Data file renamed to FACS_data.xlsx as the Rmd expects.",
       "on_main_path": true
+    },
+    {
+      "id": "art-aztec-translational-biomarkers-md-2",
+      "type": "artifact",
+      "label": "AZTEC_translational_biomarkers.md",
+      "path": "figures/AZTEC_translational_biomarkers.md",
+      "sha256": "eea840362c3964c9df7969fdbf40c70092a702ad7a94a3a23d6d2428db3bbbcf",
+      "size": 11511,
+      "exists": true,
+      "recorded_at": "2026-11-14T22:56:46Z",
+      "recorded_by": "claude-code",
+      "role": "result",
+      "generated_by": "run-run-rscript-2",
+      "used_by": [],
+      "integrity": "intact",
+      "on_main_path": true
+    },
+    {
+      "id": "run-run-rscript-2",
+      "type": "run",
+      "label": "Run Rscript",
+      "command": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"figures/AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
+      "code": [],
+      "params": {},
+      "inputs": [],
+      "outputs": [
+        "art-aztec-translational-biomarkers-md-2",
+        "art-knit-unnamed-chunk-10-1-png-1",
+        "art-knit-unnamed-chunk-11-1-png-1",
+        "art-knit-unnamed-chunk-12-1-png-1",
+        "art-knit-unnamed-chunk-13-1-png-1",
+        "art-knit-unnamed-chunk-14-1-png-1",
+        "art-knit-unnamed-chunk-15-1-png-1",
+        "art-knit-unnamed-chunk-16-1-png-1",
+        "art-knit-unnamed-chunk-17-1-png-1",
+        "art-knit-unnamed-chunk-18-1-png-1",
+        "art-knit-unnamed-chunk-19-1-png-1",
+        "art-knit-unnamed-chunk-2-1-png-1",
+        "art-knit-unnamed-chunk-20-1-png-1",
+        "art-knit-unnamed-chunk-21-1-png-1",
+        "art-knit-unnamed-chunk-22-1-png-1",
+        "art-knit-unnamed-chunk-23-1-png-1",
+        "art-knit-unnamed-chunk-24-1-png-1",
+        "art-knit-unnamed-chunk-25-1-png-1",
+        "art-knit-unnamed-chunk-26-1-png-1",
+        "art-knit-unnamed-chunk-27-1-png-1",
+        "art-knit-unnamed-chunk-28-1-png-1",
+        "art-knit-unnamed-chunk-29-1-png-1",
+        "art-knit-unnamed-chunk-3-1-png-1",
+        "art-knit-unnamed-chunk-30-1-png-1",
+        "art-knit-unnamed-chunk-31-1-png-1",
+        "art-knit-unnamed-chunk-4-1-png-1",
+        "art-knit-unnamed-chunk-5-1-png-1",
+        "art-knit-unnamed-chunk-6-1-png-1",
+        "art-knit-unnamed-chunk-7-1-png-1",
+        "art-knit-unnamed-chunk-8-1-png-1",
+        "art-knit-unnamed-chunk-9-1-png-1"
+      ],
+      "status": "completed",
+      "evidence": {
+        "level": "observed",
+        "exec_ids": [
+          "x-0004"
+        ],
+        "source": "ag-run",
+        "exit_code": 0,
+        "started": "2026-11-14T22:56:31Z",
+        "ended": "2026-11-14T22:56:46Z",
+        "duration_ms": 15738,
+        "cwd": ".",
+        "stdout_head": "[1] \"figures/AZTEC_translational_biomarkers.md\"\n",
+        "stderr_head": "",
+        "outputs_observed": [
+          "figures/AZTEC_translational_biomarkers.md",
+          "figures/knit-unnamed-chunk-10-1.png",
+          "figures/knit-unnamed-chunk-11-1.png",
+          "figures/knit-unnamed-chunk-12-1.png",
+          "figures/knit-unnamed-chunk-13-1.png",
+          "figures/knit-unnamed-chunk-14-1.png",
+          "figures/knit-unnamed-chunk-15-1.png",
+          "figures/knit-unnamed-chunk-16-1.png",
+          "figures/knit-unnamed-chunk-17-1.png",
+          "figures/knit-unnamed-chunk-18-1.png",
+          "figures/knit-unnamed-chunk-19-1.png",
+          "figures/knit-unnamed-chunk-2-1.png",
+          "figures/knit-unnamed-chunk-20-1.png",
+          "figures/knit-unnamed-chunk-21-1.png",
+          "figures/knit-unnamed-chunk-22-1.png",
+          "figures/knit-unnamed-chunk-23-1.png",
+          "figures/knit-unnamed-chunk-24-1.png",
+          "figures/knit-unnamed-chunk-25-1.png",
+          "figures/knit-unnamed-chunk-26-1.png",
+          "figures/knit-unnamed-chunk-27-1.png",
+          "figures/knit-unnamed-chunk-28-1.png",
+          "figures/knit-unnamed-chunk-29-1.png",
+          "figures/knit-unnamed-chunk-3-1.png",
+          "figures/knit-unnamed-chunk-30-1.png",
+          "figures/knit-unnamed-chunk-31-1.png",
+          "figures/knit-unnamed-chunk-4-1.png",
+          "figures/knit-unnamed-chunk-5-1.png",
+          "figures/knit-unnamed-chunk-6-1.png",
+          "figures/knit-unnamed-chunk-7-1.png",
+          "figures/knit-unnamed-chunk-8-1.png",
+          "figures/knit-unnamed-chunk-9-1.png"
+        ]
+      },
+      "environment": {
+        "python": "3.14.8",
+        "platform": "macOS-15.8.1-arm64-arm-64bit-Mach-O"
+      },
+      "git": {
+        "commit": "f7083425f14e8c926b3b867bee301f6210235574",
+        "dirty": true
+      },
+      "verified_by_replay": true,
+      "recorded_at": "2026-11-14T22:56:46Z",
+      "recorded_by": "claude-code",
+      "supersedes": "run-run-rscript-1",
+      "auto": {
+        "label_from": "command"
+      },
+      "on_main_path": true,
+      "replay": {
+        "ts": "2026-11-14T22:57:01Z",
+        "source": "local-check",
+        "manifest": "whatran.json"
+      }
     }
   ],
   "edges": [
@@ -788,6 +917,166 @@
       "kind": "generated"
     },
     {
+      "from": "run-run-rscript-2",
+      "to": "art-aztec-translational-biomarkers-md-2",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-10-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-11-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-12-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-13-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-14-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-15-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-16-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-17-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-18-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-19-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-2-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-20-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-21-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-22-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-23-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-24-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-25-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-26-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-27-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-28-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-29-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-3-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-30-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-31-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-4-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-5-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-6-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-7-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-8-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "art-knit-unnamed-chunk-9-1-png-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-run-rscript-2",
+      "to": "run-run-rscript-1",
+      "kind": "supersedes"
+    },
+    {
       "from": "art-knit-unnamed-chunk-10-1-png-1",
       "to": "claim-figure-3-the-tils-roc-and-the-logistic-m-1",
       "kind": "supports"
@@ -832,23 +1121,25 @@
     "art-knit-unnamed-chunk-9-1-png-1",
     "run-run-rscript-1",
     "claim-figure-3-the-tils-roc-and-the-logistic-m-1",
-    "claim-figure-4-and-s5-differ-the-deposited-dat-1"
+    "claim-figure-4-and-s5-differ-the-deposited-dat-1",
+    "art-aztec-translational-biomarkers-md-2",
+    "run-run-rscript-2"
   ],
   "summary": {
     "runs": {
-      "total": 1,
-      "observed": 1,
+      "total": 2,
+      "observed": 2,
       "declared": 0,
       "rejected": 0,
       "failed": 0,
-      "superseded": 0,
-      "replay_verified": 0
+      "superseded": 1,
+      "replay_verified": 1
     },
     "artifacts": {
-      "total": 31,
+      "total": 32,
       "intact": 31,
       "modified": 0,
-      "missing": 0,
+      "missing": 1,
       "unchecked": 0
     },
     "claims": {
@@ -856,11 +1147,11 @@
       "rejected": 0
     },
     "executions": {
-      "total": 3,
-      "linked": 1
+      "total": 4,
+      "linked": 2
     },
     "retracted": 0,
-    "main_path_nodes": 34
+    "main_path_nodes": 36
   },
   "exec_log": [
     {
@@ -1100,6 +1391,210 @@
       "files_changed_truncated": false,
       "interrupted": false,
       "linked_run": null
+    },
+    {
+      "id": "x-0004",
+      "ts": "2026-11-14T22:56:46Z",
+      "source": "ag-run",
+      "command": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"figures/AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
+      "cwd": ".",
+      "exit_code": 0,
+      "started": "2026-11-14T22:56:31Z",
+      "ended": "2026-11-14T22:56:46Z",
+      "duration_ms": 15738,
+      "stdout_head": "[1] \"figures/AZTEC_translational_biomarkers.md\"\n",
+      "stderr_head": "",
+      "files_changed": [
+        {
+          "path": "figures/AZTEC_translational_biomarkers.md",
+          "size": 11511,
+          "mtime": "2026-11-14T22:56:46Z",
+          "sha256": "eea840362c3964c9df7969fdbf40c70092a702ad7a94a3a23d6d2428db3bbbcf"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-10-1.png",
+          "size": 76846,
+          "mtime": "2026-11-14T22:56:35Z",
+          "sha256": "e787a26177a650bf5af57793bd38ea5300a8d797d2803790ed24a52f93252fe6"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-11-1.png",
+          "size": 19671,
+          "mtime": "2026-11-14T22:56:36Z",
+          "sha256": "b0f221dc5fed13c1b768e75bb20fdbabd8a01d96d19a9284483a49233b39414d"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-12-1.png",
+          "size": 19531,
+          "mtime": "2026-11-14T22:56:36Z",
+          "sha256": "150aa8904ec120a873a9b3be41196f55c2ea9cbc9461d8bd6c67f01f6a90e978"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-13-1.png",
+          "size": 25167,
+          "mtime": "2026-11-14T22:56:36Z",
+          "sha256": "9f126d0d952abe4a2878a9c6ba050e5b14f0a4c4367902b5ca5b8738bb2ea564"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-14-1.png",
+          "size": 24924,
+          "mtime": "2026-11-14T22:56:37Z",
+          "sha256": "ac49a4a99f1fc4afc24429cf8ba635f36c95f41a72f8934d38ecebcce55abf7f"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-15-1.png",
+          "size": 25163,
+          "mtime": "2026-11-14T22:56:37Z",
+          "sha256": "fc4b5d6de2189a607f1355640ff9d346139eadd0156cb65d62ff2fdd38b56229"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-16-1.png",
+          "size": 89544,
+          "mtime": "2026-11-14T22:56:39Z",
+          "sha256": "16d7b86e7436993bd14e50cf7bf325f06b73b76b168b997676f7393dab4200f7"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-17-1.png",
+          "size": 12642,
+          "mtime": "2026-11-14T22:56:39Z",
+          "sha256": "b4d2e811c5194d6f7fda0b5a2f83f59cb3c63b56201e606157d6f2ee6b34266f"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-18-1.png",
+          "size": 12768,
+          "mtime": "2026-11-14T22:56:39Z",
+          "sha256": "1f8b35d47524821867f93284b99faac8ee468c41b3d0c01cac311e065d4f8a18"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-19-1.png",
+          "size": 12910,
+          "mtime": "2026-11-14T22:56:39Z",
+          "sha256": "c4ab127b26ceee9c2c79fb024bf1187e63707e6670206a16fe5d4d72a8aaa572"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-2-1.png",
+          "size": 11270,
+          "mtime": "2026-11-14T22:56:33Z",
+          "sha256": "abc8fa6d1f37286f686ba6085d292c1cf60b930d652cdbdffa8320324c5464bc"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-20-1.png",
+          "size": 13999,
+          "mtime": "2026-11-14T22:56:39Z",
+          "sha256": "3c668d6498b971b89925b201c12c4fcf40d33164d5e377bd9050cb1bd3bf33f5"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-21-1.png",
+          "size": 12464,
+          "mtime": "2026-11-14T22:56:40Z",
+          "sha256": "3427d2800588d0bc4c8d12b4b028538eab3f5e7d0111cc7caafcbd553e19b4ea"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-22-1.png",
+          "size": 12527,
+          "mtime": "2026-11-14T22:56:40Z",
+          "sha256": "2b4c3144ed7223c7fef4960a1ec8ec307f7c7119affd5aa9b9645f2bfa29281e"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-23-1.png",
+          "size": 14857,
+          "mtime": "2026-11-14T22:56:40Z",
+          "sha256": "5bbb5aadd6b74f8f317e8d559c21e169fc4809927d983ac0677e43da19a7d647"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-24-1.png",
+          "size": 14801,
+          "mtime": "2026-11-14T22:56:40Z",
+          "sha256": "90f2c2e88561296c7d561dcf27b8f67a130b1804960f79e2dc3fb53939e66620"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-25-1.png",
+          "size": 83338,
+          "mtime": "2026-11-14T22:56:42Z",
+          "sha256": "7f28183fb239b006b58b08524038364763670a6d62bb641ed1b5a31770c9ef58"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-26-1.png",
+          "size": 22790,
+          "mtime": "2026-11-14T22:56:42Z",
+          "sha256": "82af6ba7578ef170d5d2e0ed70ffb7597d38c91a7915ab4f273cbd8b662efb3f"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-27-1.png",
+          "size": 22663,
+          "mtime": "2026-11-14T22:56:42Z",
+          "sha256": "a3863d92b6cb8602367a368b5adc62c7c219827d26475843df4b454826e4f394"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-28-1.png",
+          "size": 30743,
+          "mtime": "2026-11-14T22:56:43Z",
+          "sha256": "ccda2489c36472e58839e5db278b7215dab1d9b4f21ff91b6ee6e420abcf7b0a"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-29-1.png",
+          "size": 30807,
+          "mtime": "2026-11-14T22:56:43Z",
+          "sha256": "bcb823f284f7ab67509da5d36e1e906b88c8810c2c488b2c54193bb0de76a52e"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-3-1.png",
+          "size": 11416,
+          "mtime": "2026-11-14T22:56:33Z",
+          "sha256": "b8aadc74bf7d2a30edcb1cc3fc038ed1c1dd8f42692f9d951369fb56706ff7a9"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-30-1.png",
+          "size": 30995,
+          "mtime": "2026-11-14T22:56:44Z",
+          "sha256": "0f033ef62fb63951913a8d7036d852a37963129b4163473702fc02ab94a06059"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-31-1.png",
+          "size": 116276,
+          "mtime": "2026-11-14T22:56:46Z",
+          "sha256": "f4efdd3e6390e3c0c39221b388b4fe8db5be3ca9c50a4b521898f94ecd6719d9"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-4-1.png",
+          "size": 11606,
+          "mtime": "2026-11-14T22:56:33Z",
+          "sha256": "0a896dd863f3b4bb94c0583a94bd468dcd8581cb503b980fd9289ebe972f57c7"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-5-1.png",
+          "size": 12036,
+          "mtime": "2026-11-14T22:56:34Z",
+          "sha256": "0c66a4e0eaa7219f2a885037e2373e82c3f56ae15e78aed9846995798a1a4503"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-6-1.png",
+          "size": 11308,
+          "mtime": "2026-11-14T22:56:34Z",
+          "sha256": "8df64fb4b9ca271085f0f41fb71ee62e0b731fc1e9482b4ada8bbec5fec10fe0"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-7-1.png",
+          "size": 11409,
+          "mtime": "2026-11-14T22:56:34Z",
+          "sha256": "55e8dca717352373f3c2dfa0d3a26919a3fa2df1f9e3ffa92e7fac498b3932dc"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-8-1.png",
+          "size": 13142,
+          "mtime": "2026-11-14T22:56:34Z",
+          "sha256": "92bb78e5ac8f0ffc4fac5020826cd7433025a7af323a3b7521c6906611800d8e"
+        },
+        {
+          "path": "figures/knit-unnamed-chunk-9-1.png",
+          "size": 13197,
+          "mtime": "2026-11-14T22:56:34Z",
+          "sha256": "71a80419a3a12b924fb1b6c1c5e918d0f65e31155c4b863f23982ef0e5c0e57b"
+        }
+      ],
+      "files_changed_truncated": false,
+      "interrupted": false,
+      "linked_run": "run-run-rscript-2"
     }
   ]
 }
