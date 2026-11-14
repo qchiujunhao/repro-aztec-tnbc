@@ -4,7 +4,8 @@
     "question": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?",
     "findings": [
       "Figure 3, the TILs ROC and the logistic model reproduce exactly from the deposited Rmd and source data",
-      "Figure 4 and S5 differ: the deposited data give 42 Cycle 1 patients in the clinical-benefit set, the authors' rendering shows 43, so every Cycle 1 p-value shifts"
+      "Figure 4 and S5 differ: the deposited data give 42 Cycle 1 patients in the clinical-benefit set, the authors' rendering shows 43, so every Cycle 1 p-value shifts",
+      "The extracted p-values show Figure 3 matching the authors' rendering and every Figure 4 Cycle 1 comparison shifted by one patient"
     ]
   },
   "inputs": [],
@@ -47,6 +48,14 @@
         "figures/knit-unnamed-chunk-7-1.png",
         "figures/knit-unnamed-chunk-8-1.png",
         "figures/knit-unnamed-chunk-9-1.png"
+      ]
+    },
+    {
+      "id": "extract-p-values-from-the-knitted-tables-1",
+      "title": "Extract p-values from the knitted tables",
+      "script": "extract_pvalues.py",
+      "produces": [
+        "figures/pvalues.csv"
       ]
     }
   ],
@@ -174,7 +183,11 @@
     {
       "path": "knit-unnamed-chunk-9-1.png",
       "compare": "exists"
+    },
+    {
+      "path": "pvalues.csv",
+      "compare": "exact"
     }
   ],
-  "generated": "whatran 0.4.0 295189c89d24"
+  "generated": "whatran 0.4.0 ff3026c3f97d"
 }

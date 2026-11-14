@@ -1,6 +1,6 @@
 # Analysis graph
 
-Generated 2026-11-14T23:07:16Z by whatran.py/0.4.0. Main path only; rejected branches and unlinked executions are kept in `graph.json`.
+Generated 2026-11-14T23:08:14Z by whatran.py/0.4.0. Main path only; rejected branches and unlinked executions are kept in `graph.json`.
 
 ```mermaid
 flowchart TD
@@ -40,6 +40,10 @@ flowchart TD
   n33(["Figure 4 and S5 differ: the deposited data give 42 Cycle 1 p"])
   n34[/"AZTEC_translational_biomarkers.md"/]
   n35["Run Rscript"]
+  n36[/"pvalues.csv"/]
+  n37["Run extract_pvalues.py"]
+  n38["Extract p-values from the knitted tables"]
+  n39(["The extracted p-values show Figure 3 matching the authors' r"])
   n31 --> n0
   n31 --> n1
   n31 --> n2
@@ -102,6 +106,11 @@ flowchart TD
   n35 --> n28
   n35 --> n29
   n35 --> n30
+  n34 --> n37
+  n37 --> n36
+  n34 --> n38
+  n38 --> n36
   n1 -.-> n32
   n7 -.-> n33
+  n36 -.-> n39
 ```

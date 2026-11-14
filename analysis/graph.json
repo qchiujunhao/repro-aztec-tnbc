@@ -1,7 +1,7 @@
 {
   "format": "analysis-graph/0.1",
   "generator": "whatran.py/0.4.0",
-  "generated_at": "2026-11-14T23:07:16Z",
+  "generated_at": "2026-11-14T23:08:14Z",
   "project": {
     "name": "AZTEC translational biomarkers: reproduction",
     "description": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?"
@@ -757,7 +757,7 @@
       },
       "on_main_path": true,
       "replay": {
-        "ts": "2026-11-14T23:07:16Z",
+        "ts": "2026-11-14T23:08:14Z",
         "source": "local-check",
         "manifest": "whatran.json"
       }
@@ -776,7 +776,7 @@
       "generated_by": "run-extract-p-values-from-the-knitted-tables-1",
       "used_by": [],
       "integrity": "intact",
-      "on_main_path": false
+      "on_main_path": true
     },
     {
       "id": "run-run-extract-pvalues-py-1",
@@ -830,7 +830,7 @@
       },
       "status_reason": "superseded by run-extract-p-values-from-the-knitted-tables-1",
       "status_changed_at": "2026-11-14T23:07:02Z",
-      "on_main_path": false
+      "on_main_path": true
     },
     {
       "id": "run-extract-p-values-from-the-knitted-tables-1",
@@ -876,11 +876,28 @@
         "commit": "40a811b3265052697e61de60f54973529fcb17cd",
         "dirty": true
       },
-      "verified_by_replay": false,
+      "verified_by_replay": true,
       "recorded_at": "2026-11-14T23:07:02Z",
       "recorded_by": "claude-code",
       "supersedes": "run-run-extract-pvalues-py-1",
-      "on_main_path": false
+      "on_main_path": true,
+      "replay": {
+        "ts": "2026-11-14T23:08:14Z",
+        "source": "local-check",
+        "manifest": "whatran.json"
+      }
+    },
+    {
+      "id": "claim-the-extracted-p-values-show-figure-3-mat-1",
+      "type": "claim",
+      "label": "The extracted p-values show Figure 3 matching the authors' rendering and every Figure 4 Cycle 1 comparison shifted by one patient",
+      "supported_by": [
+        "art-pvalues-csv-1"
+      ],
+      "status": "tentative",
+      "recorded_at": "2026-11-14T23:08:01Z",
+      "recorded_by": "claude-code",
+      "on_main_path": true
     }
   ],
   "edges": [
@@ -1233,6 +1250,11 @@
       "from": "art-knit-unnamed-chunk-16-1-png-1",
       "to": "claim-figure-4-and-s5-differ-the-deposited-dat-1",
       "kind": "supports"
+    },
+    {
+      "from": "art-pvalues-csv-1",
+      "to": "claim-the-extracted-p-values-show-figure-3-mat-1",
+      "kind": "supports"
     }
   ],
   "main_path": [
@@ -1271,7 +1293,11 @@
     "claim-figure-3-the-tils-roc-and-the-logistic-m-1",
     "claim-figure-4-and-s5-differ-the-deposited-dat-1",
     "art-aztec-translational-biomarkers-md-2",
-    "run-run-rscript-2"
+    "run-run-rscript-2",
+    "art-pvalues-csv-1",
+    "run-run-extract-pvalues-py-1",
+    "run-extract-p-values-from-the-knitted-tables-1",
+    "claim-the-extracted-p-values-show-figure-3-mat-1"
   ],
   "summary": {
     "runs": {
@@ -1281,7 +1307,7 @@
       "rejected": 0,
       "failed": 0,
       "superseded": 2,
-      "replay_verified": 1
+      "replay_verified": 2
     },
     "artifacts": {
       "total": 33,
@@ -1291,7 +1317,7 @@
       "unchecked": 0
     },
     "claims": {
-      "total": 2,
+      "total": 3,
       "rejected": 0
     },
     "executions": {
@@ -1299,7 +1325,7 @@
       "linked": 3
     },
     "retracted": 0,
-    "main_path_nodes": 36
+    "main_path_nodes": 40
   },
   "exec_log": [
     {
