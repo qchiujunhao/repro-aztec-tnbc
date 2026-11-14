@@ -1,6 +1,6 @@
 # Analysis graph
 
-Generated 2026-11-14T22:57:01Z by whatran.py/0.4.0. Main path only; rejected branches and unlinked executions are kept in `graph.json`.
+Generated 2026-11-14T23:07:16Z by whatran.py/0.4.0. Main path only; rejected branches and unlinked executions are kept in `graph.json`.
 
 ```mermaid
 flowchart TD

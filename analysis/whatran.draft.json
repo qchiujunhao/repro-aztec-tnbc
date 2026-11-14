@@ -56,10 +56,6 @@
       "compare": "exact"
     },
     {
-      "path": "AZTEC_translational_biomarkers.md",
-      "compare": "exact"
-    },
-    {
       "path": "knit-unnamed-chunk-10-1.png",
       "compare": "exists"
     },

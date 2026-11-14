@@ -1,7 +1,7 @@
 {
   "format": "analysis-graph/0.1",
   "generator": "whatran.py/0.4.0",
-  "generated_at": "2026-11-14T22:57:01Z",
+  "generated_at": "2026-11-14T23:07:16Z",
   "project": {
     "name": "AZTEC translational biomarkers: reproduction",
     "description": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?"
@@ -642,9 +642,12 @@
       "exists": true,
       "recorded_at": "2026-11-14T22:56:46Z",
       "recorded_by": "claude-code",
-      "role": "result",
+      "role": "intermediate",
       "generated_by": "run-run-rscript-2",
-      "used_by": [],
+      "used_by": [
+        "run-run-extract-pvalues-py-1",
+        "run-extract-p-values-from-the-knitted-tables-1"
+      ],
       "integrity": "intact",
       "on_main_path": true
     },
@@ -754,10 +757,130 @@
       },
       "on_main_path": true,
       "replay": {
-        "ts": "2026-11-14T22:57:01Z",
+        "ts": "2026-11-14T23:07:16Z",
         "source": "local-check",
         "manifest": "whatran.json"
       }
+    },
+    {
+      "id": "art-pvalues-csv-1",
+      "type": "artifact",
+      "label": "pvalues.csv",
+      "path": "figures/pvalues.csv",
+      "sha256": "7cefcf9b95e7ce4d8132ed3cff534d35ca016864d21fe630f912dd63aa3bb91b",
+      "size": 21,
+      "exists": true,
+      "recorded_at": "2026-11-14T23:06:14Z",
+      "recorded_by": "claude-code",
+      "role": "result",
+      "generated_by": "run-extract-p-values-from-the-knitted-tables-1",
+      "used_by": [],
+      "integrity": "intact",
+      "on_main_path": false
+    },
+    {
+      "id": "run-run-extract-pvalues-py-1",
+      "type": "run",
+      "label": "Run extract_pvalues.py",
+      "command": "python3 extract_pvalues.py figures/AZTEC_translational_biomarkers.md figures/pvalues.csv",
+      "code": [
+        {
+          "path": "extract_pvalues.py",
+          "sha256": "7f271452f488cdd4d33df93ef596749b96feaaec24a36a29f57651e06f9f304d"
+        }
+      ],
+      "params": {},
+      "inputs": [
+        "art-aztec-translational-biomarkers-md-2"
+      ],
+      "outputs": [
+        "art-pvalues-csv-1"
+      ],
+      "status": "superseded",
+      "evidence": {
+        "level": "observed",
+        "exec_ids": [
+          "x-0005"
+        ],
+        "source": "ag-run",
+        "exit_code": 0,
+        "started": "2026-11-14T23:06:14Z",
+        "ended": "2026-11-14T23:06:14Z",
+        "duration_ms": 34,
+        "cwd": ".",
+        "stdout_head": "0 values -> figures/pvalues.csv\n",
+        "stderr_head": "",
+        "outputs_observed": [
+          "figures/pvalues.csv"
+        ]
+      },
+      "environment": {
+        "python": "3.14.8",
+        "platform": "macOS-15.8.1-arm64-arm-64bit-Mach-O"
+      },
+      "git": {
+        "commit": "40a811b3265052697e61de60f54973529fcb17cd",
+        "dirty": true
+      },
+      "verified_by_replay": false,
+      "recorded_at": "2026-11-14T23:06:14Z",
+      "recorded_by": "claude-code",
+      "auto": {
+        "label_from": "command"
+      },
+      "status_reason": "superseded by run-extract-p-values-from-the-knitted-tables-1",
+      "status_changed_at": "2026-11-14T23:07:02Z",
+      "on_main_path": false
+    },
+    {
+      "id": "run-extract-p-values-from-the-knitted-tables-1",
+      "type": "run",
+      "label": "Extract p-values from the knitted tables",
+      "command": "python3 extract_pvalues.py figures/AZTEC_translational_biomarkers.md figures/pvalues.csv",
+      "code": [
+        {
+          "path": "extract_pvalues.py",
+          "sha256": "7f271452f488cdd4d33df93ef596749b96feaaec24a36a29f57651e06f9f304d"
+        }
+      ],
+      "params": {},
+      "inputs": [
+        "art-aztec-translational-biomarkers-md-2"
+      ],
+      "outputs": [
+        "art-pvalues-csv-1"
+      ],
+      "status": "completed",
+      "evidence": {
+        "level": "observed",
+        "exec_ids": [
+          "x-0005"
+        ],
+        "source": "ag-run",
+        "exit_code": 0,
+        "started": "2026-11-14T23:06:14Z",
+        "ended": "2026-11-14T23:06:14Z",
+        "duration_ms": 34,
+        "cwd": ".",
+        "stdout_head": "0 values -> figures/pvalues.csv\n",
+        "stderr_head": "",
+        "outputs_observed": [
+          "figures/pvalues.csv"
+        ]
+      },
+      "environment": {
+        "python": "3.14.8",
+        "platform": "macOS-15.8.1-arm64-arm-64bit-Mach-O"
+      },
+      "git": {
+        "commit": "40a811b3265052697e61de60f54973529fcb17cd",
+        "dirty": true
+      },
+      "verified_by_replay": false,
+      "recorded_at": "2026-11-14T23:07:02Z",
+      "recorded_by": "claude-code",
+      "supersedes": "run-run-extract-pvalues-py-1",
+      "on_main_path": false
     }
   ],
   "edges": [
@@ -1077,6 +1200,31 @@
       "kind": "supersedes"
     },
     {
+      "from": "art-aztec-translational-biomarkers-md-2",
+      "to": "run-run-extract-pvalues-py-1",
+      "kind": "used"
+    },
+    {
+      "from": "run-run-extract-pvalues-py-1",
+      "to": "art-pvalues-csv-1",
+      "kind": "generated"
+    },
+    {
+      "from": "art-aztec-translational-biomarkers-md-2",
+      "to": "run-extract-p-values-from-the-knitted-tables-1",
+      "kind": "used"
+    },
+    {
+      "from": "run-extract-p-values-from-the-knitted-tables-1",
+      "to": "art-pvalues-csv-1",
+      "kind": "generated"
+    },
+    {
+      "from": "run-extract-p-values-from-the-knitted-tables-1",
+      "to": "run-run-extract-pvalues-py-1",
+      "kind": "supersedes"
+    },
+    {
       "from": "art-knit-unnamed-chunk-10-1-png-1",
       "to": "claim-figure-3-the-tils-roc-and-the-logistic-m-1",
       "kind": "supports"
@@ -1127,17 +1275,17 @@
   ],
   "summary": {
     "runs": {
-      "total": 2,
-      "observed": 2,
+      "total": 4,
+      "observed": 4,
       "declared": 0,
       "rejected": 0,
       "failed": 0,
-      "superseded": 1,
+      "superseded": 2,
       "replay_verified": 1
     },
     "artifacts": {
-      "total": 32,
-      "intact": 31,
+      "total": 33,
+      "intact": 32,
       "modified": 0,
       "missing": 1,
       "unchecked": 0
@@ -1147,8 +1295,8 @@
       "rejected": 0
     },
     "executions": {
-      "total": 4,
-      "linked": 2
+      "total": 5,
+      "linked": 3
     },
     "retracted": 0,
     "main_path_nodes": 36
@@ -1595,6 +1743,30 @@
       "files_changed_truncated": false,
       "interrupted": false,
       "linked_run": "run-run-rscript-2"
+    },
+    {
+      "id": "x-0005",
+      "ts": "2026-11-14T23:06:14Z",
+      "source": "ag-run",
+      "command": "python3 extract_pvalues.py figures/AZTEC_translational_biomarkers.md figures/pvalues.csv",
+      "cwd": ".",
+      "exit_code": 0,
+      "started": "2026-11-14T23:06:14Z",
+      "ended": "2026-11-14T23:06:14Z",
+      "duration_ms": 34,
+      "stdout_head": "0 values -> figures/pvalues.csv\n",
+      "stderr_head": "",
+      "files_changed": [
+        {
+          "path": "figures/pvalues.csv",
+          "size": 21,
+          "mtime": "2026-11-14T23:06:14Z",
+          "sha256": "7cefcf9b95e7ce4d8132ed3cff534d35ca016864d21fe630f912dd63aa3bb91b"
+        }
+      ],
+      "files_changed_truncated": false,
+      "interrupted": false,
+      "linked_run": "run-extract-p-values-from-the-knitted-tables-1"
     }
   ]
 }

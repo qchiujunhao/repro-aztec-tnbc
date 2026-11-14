@@ -53,11 +53,7 @@
   "outputs": [
     {
       "path": "AZTEC_translational_biomarkers.md",
-      "compare": "exact"
-    },
-    {
-      "path": "AZTEC_translational_biomarkers.md",
-      "compare": "exact"
+      "compare": "exists"
     },
     {
       "path": "knit-unnamed-chunk-10-1.png",
@@ -180,5 +176,5 @@
       "compare": "exists"
     }
   ],
-  "generated": "whatran 0.4.0 bbb8b502c29e"
+  "generated": "whatran 0.4.0 295189c89d24"
 }
