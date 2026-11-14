@@ -1,0 +1,1209 @@
+---
+title: "AZTEC Translational Biomarker Analysis"
+output:
+  html_document:
+    toc: yes
+    df_print: paged
+  word_document: default
+  html_notebook:
+    toc: yes
+    code_folding: hide
+  pdf_document: default
+---
+
+```{css, echo=FALSE}
+/* Page layout */
+body {
+  max-width: 960px;
+  margin: auto;
+  padding: 20px 40px 60px 40px;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* Heading spacing */
+h1 { margin-top: 60px; margin-bottom: 20px; }
+h2 { margin-top: 50px; margin-bottom: 16px; border-bottom: 2px solid #ccc; padding-bottom: 8px;}
+h3 { margin-top: 60px; margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 6px;}
+h4 { margin-top: 24px; margin-bottom: 10px; }
+
+/* Space around chunk output (plots, tables, printed objects) */
+.r + .output,
+.sourceCode + .output { margin-top: 12px; }
+
+pre, .sourceCode {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Figures */
+img, .plot {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+/* Paged data frame tables */
+.pagedtable-wrapper {
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+/* kable / standard HTML tables */
+table {
+  margin-top: 16px;
+  margin-bottom: 24px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th { background-color: #f5f5f5; }
+tr:nth-child(even) { background-color: #fafafa; }
+```
+
+
+```{r setup, include=FALSE}
+
+library(dplyr)
+library(tidyr)
+library(magrittr)
+library(ggplot2)
+library(stringr)
+library(readxl)
+library(knitr)
+library(patchwork)
+library(ROCR)
+library(pROC)
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+
+options(scipen = 999)
+
+data.f <- "FACS_data.xlsx"
+
+facs.df <- read_excel(data.f, "facs data") %>%
+  filter(!is.na(`Batch number`)) %>%
+  filter(!is.na(`Responder Group`)) %>%
+  mutate(Response = ifelse(`Responder Group` == "A", "R", "N")) %>%
+  mutate(Response = factor(Response, levels = c("R", "N"))) %>%
+  mutate(Treatment = ifelse(`Treatment group (grey)` == 20, "20Gy", "24Gy")) %>%
+  mutate(Timepoint = str_extract(`Batch number`, ".+(?= B)")) %>%
+  mutate(Timepoint = factor(Timepoint, levels = c("Baseline", "Cycle 1", "Cycle 3"))) %>%
+  mutate(`Lines of chemo in metastatic setting` = ifelse(`Lines of chemo in metastatic setting` == 0, "No", "Yes")) %>%
+  mutate(`Lines of chemo in metastatic setting` = factor(`Lines of chemo in metastatic setting`, levels = c("No", "Yes")))
+
+facs.df
+
+# p value formatter
+pformat <- function(p) {
+  if (p < 0.0001) {
+    "<0.0001"
+  } else {
+    as.character(signif(p, 2))
+  }
+}
+
+p_label_thresh <- function(p, threshold = 1e-4) {
+  if (!is.finite(p) || is.na(p)) return("NA")
+  if (p <= 0) return('"<" * 10^{-308}')
+
+  if (p < threshold) {
+    e <- floor(log10(p))
+    m <- signif(p / 10^e, 2)
+    m_str <- sub("\\.?0+$", "", format(m, trim = TRUE, scientific = FALSE))
+    sprintf("%s %%*%% 10^{%d}", m_str, e)
+  } else {
+    as.character(signif(p, 2))
+  }
+}
+
+```
+
+## Figure 3
+
+### (A) CD3
+
+```{r fig.height=3, fig.width=3}
+
+baseline_cb.df <- facs.df %>%
+  filter(grepl("Baseline", `Batch number`, fixed = T)) %>%
+  filter(Clinical_Benefit %in% c("Y", "N")) %>%
+  mutate(Clinical_Benefit = factor(Clinical_Benefit, levels = c("Y", "N")))
+
+baseline_cb_n.df <- baseline_cb.df %>%
+  group_by(Clinical_Benefit) %>%
+  tally %>%
+  mutate(Clinical_Benefit_n = paste(Clinical_Benefit, "\n(", n, ")", sep = ""))
+
+cd3_cb.p <- baseline_cb.df %>%
+  ggplot(aes(x = Clinical_Benefit, y = `T cells`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_x_discrete(labels = baseline_cb_n.df$Clinical_Benefit_n) +
+  labs(x = "", y = "% CD3+ cells") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0.2, vjust = -0.1, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10))
+
+cd3_cb.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = `T cells` ~ Clinical_Benefit, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (B) CD8
+
+```{r fig.height=3, fig.width=3}
+
+cd8_cb.p <- baseline_cb.df %>%
+  ggplot(aes(x = Clinical_Benefit, y = CD8, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_x_discrete(labels = baseline_cb_n.df$Clinical_Benefit_n) +
+  labs(x = "", y = "% CD3+ CD8+ cells") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0.2, vjust = -0.1, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10))
+
+cd8_cb.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = CD8 ~ Clinical_Benefit, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+
+
+```
+
+### (C) CD4
+
+```{r fig.height=3, fig.width=3}
+
+cd4_cb.p <- baseline_cb.df %>%
+  ggplot(aes(x = Clinical_Benefit, y = CD4, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_x_discrete(labels = baseline_cb_n.df$Clinical_Benefit_n) +
+  labs(x = "", y = "% CD3+ CD4+ cells") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0.2, vjust = -0.1, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10))
+
+cd4_cb.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = CD4 ~ Clinical_Benefit, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (D) CD4:CD8
+
+```{r fig.height=3, fig.width=2.5}
+
+ratio_cb.p <- baseline_cb.df %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD4:CD8`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = T, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.3, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 10), breaks = seq(from = 0, to = 10, by = 2)) +
+  scale_x_discrete(labels = baseline_cb_n.df$Clinical_Benefit_n) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "CD4:CD8", fill = "Clinical\nbenefit") +
+  guides(fill = guide_legend(override.aes = list(size = 4))) +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0.2, vjust = -0.1, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10))
+
+ratio_cb.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = `CD4:CD8` ~ Clinical_Benefit, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (E) CD8 PD-1 by clinical benefit
+
+```{r fig.height=3, fig.width=3}
+
+cd8pd1_cb.p <- baseline_cb.df %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:PD-1`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_x_discrete(labels = baseline_cb_n.df$Clinical_Benefit_n) +
+  labs(x = "", y = "% CD8+ PD-1+ cells") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0.2, vjust = -0.1, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10))
+
+cd8pd1_cb.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = `CD8:PD-1` ~ Clinical_Benefit, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (F) CD4 PD-1 by clinical benefit
+
+```{r fig.height=3, fig.width=3}
+
+cd4pd1_cb.p <- baseline_cb.df %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD4:PD-1`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_x_discrete(labels = baseline_cb_n.df$Clinical_Benefit_n) +
+  labs(x = "", y = "% CD4+ PD-1+ cells") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0.2, vjust = -0.1, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10))
+
+cd4pd1_cb.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = `CD4:PD-1` ~ Clinical_Benefit, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (G) CD8 PD-1 by prior treatment
+
+```{r fig.height=3, fig.width=2.5}
+
+baseline_chemo_n.df <- baseline_cb.df %>%
+  group_by(`Lines of chemo in metastatic setting`) %>%
+  tally %>%
+  mutate(`Lines of chemo in metastatic setting n` = paste(`Lines of chemo in metastatic setting`, "\n(", n, ")", sep = ""))
+
+cd8pd1_chemo.p <- baseline_cb.df %>%
+  ggplot(aes(x = `Lines of chemo in metastatic setting`, y = `CD8:PD-1`, fill = `Lines of chemo in metastatic setting`)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#5ab4ac", "#a6611a")) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_x_discrete(labels = baseline_chemo_n.df$`Lines of chemo in metastatic setting n`) +
+  labs(x = "Prior treatment for\nadvanced disease", y = "% CD8+ PD-1+") +
+  ggsignif::geom_signif(comparisons = list(c("No", "Yes")), margin_top = 0.1, vjust = -0.2, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        axis.title.x = element_text(margin = margin(t = 10)))
+
+cd8pd1_chemo.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = `CD8:PD-1` ~ `Lines of chemo in metastatic setting`, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (G) CD4 PD-1 by prior treatment
+
+```{r fig.height=3, fig.width=2.5}
+
+cd4pd1_chemo.p <- baseline_cb.df %>%
+  ggplot(aes(x = `Lines of chemo in metastatic setting`, y = `CD4:PD-1`, fill = `Lines of chemo in metastatic setting`)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#5ab4ac", "#a6611a")) +
+  scale_y_continuous(limits = c(0, 55), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_x_discrete(labels = baseline_chemo_n.df$`Lines of chemo in metastatic setting n`) +
+  labs(x = "Prior treatment for\nadvanced disease", y = "% CD4+ PD-1+") +
+  ggsignif::geom_signif(comparisons = list(c("No", "Yes")), margin_top = 0.1, vjust = -0.2, textsize = 3.0, test.args = list(exact = F)) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        axis.title.x = element_text(margin = margin(t = 10)))
+
+cd4pd1_chemo.p
+
+baseline_cb.df %>%
+  wilcox.test(formula = `CD4:PD-1` ~ `Lines of chemo in metastatic setting`, exact = F, data = ., conf.int = T) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### Fig 3 layout
+
+```{r fig.height=6, fig.width=10}
+
+fig3_row1 <- (cd3_cb.p | cd8_cb.p | cd4_cb.p) * theme(plot.margin = unit(c(0, 20, 0, 0), "pt")) | ratio_cb.p
+
+fig3_row1 <- fig3_row1 + plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face = "bold"))
+
+fig3_chemo_block <- cowplot::ggdraw(((cd8pd1_chemo.p | cd4pd1_chemo.p) * theme(axis.title.x = element_blank(), plot.margin = margin(l = 20, b = 10)))) +
+  cowplot::draw_label("Prior treatment for advanced\ndisease",
+             x = 0.6, y = 0.02, vjust = 1, fontface = "bold", size = 10)
+
+fig3_row2 <- ((cd8pd1_cb.p | cd4pd1_cb.p) | fig3_chemo_block) +
+  plot_layout(widths = c(2, 2, 5)) + plot_annotation(tag_levels = list(c("E", "F", " G"))) & theme(plot.tag = element_text(face = "bold"))
+
+cowplot::ggdraw(fig3_row1) / cowplot::ggdraw(fig3_row2)
+
+```
+
+## Figure 4
+
+### (A) CD8 PD-1 timecourse
+
+```{r fig.height=4, fig.width=3}
+
+timecourse.df <- facs.df %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  mutate(Timepoint2 = case_when(Timepoint == "Baseline" ~ "RT-",
+                                 Timepoint == "Cycle 1" ~ "RT+",
+                                 Timepoint == "Cycle 3" ~ "C3",
+                                 TRUE ~ NA_character_)) %>%
+  mutate(Timepoint2 = factor(Timepoint2, levels = c("RT-", "RT+", "C3")))
+
+timecourse_n.df <- timecourse.df %>%
+  group_by(Timepoint2) %>%
+  tally %>%
+  mutate(labs = paste(Timepoint2, "\n(", n, ")", sep = ""))
+
+cd8pd1_bl_c1.df <- facs.df %>%
+  filter(Timepoint != "Cycle 3") %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  dplyr::select(Patient, Timepoint, `CD8:PD-1`) %>%
+  spread(Timepoint, `CD8:PD-1`, fill = NA) %>%
+  with(wilcox.test(Baseline, `Cycle 1`, paired = T, exact = F, conf.int = T)) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2))) %>%
+  mutate(comparison = "Baseline v Cycle 1") %>%
+  mutate(p.value2 = p_label_thresh(p.value))
+
+cd8pd1_c1_c3.df <- facs.df %>%
+  filter(Timepoint != "Baseline") %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  dplyr::select(Patient, Timepoint, `CD8:PD-1`) %>%
+  spread(Timepoint, `CD8:PD-1`, fill = NA) %>%
+  with(wilcox.test(`Cycle 1`, `Cycle 3`, paired = T, exact = F, conf.int = T)) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2))) %>%
+  mutate(comparison = "Cycle 1 v Cycle 3") %>%
+  mutate(p.value2 = p_label_thresh(p.value))
+
+cd8pd1_tc.p <- timecourse.df %>%
+  ggplot(aes(x = Timepoint2, y = `CD8:PD-1`, fill = Timepoint2)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 65), breaks = seq(from = 0, to = 60, by = 20)) +
+  scale_fill_manual(values = c("#fbb4b9", "#f768a1", "#c51b8a")) +
+  scale_x_discrete(labels = timecourse_n.df$labs) +
+  labs(x = "", y = "% CD8+ PD-1+") +
+  ggsignif::geom_signif(comparisons = list(c("RT-", "RT+"), c("RT+", "C3")), margin_top = 0.2, textsize = 3.0, vjust = -0.2, step_increase = 0.15, annotations = c(cd8pd1_bl_c1.df$p.value2, cd8pd1_c1_c3.df$p.value2), parse = T) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+
+cd8pd1_tc.p
+
+bind_rows(cd8pd1_bl_c1.df, cd8pd1_c1_c3.df)
+
+
+```
+
+### (B) CD4 PD-1 timecourse
+
+```{r fig.height=4, fig.width=3}
+
+cd4pd1_bl_c1.df <- facs.df %>%
+  filter(Timepoint != "Cycle 3") %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  dplyr::select(Patient, Timepoint, `CD4:PD-1`) %>%
+  spread(Timepoint, `CD4:PD-1`, fill = NA) %>%
+  with(wilcox.test(Baseline, `Cycle 1`, paired = T, exact = F, conf.int = T)) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2))) %>%
+  mutate(comparison = "Baseline v Cycle 1") %>%
+  mutate(p.value2 = p_label_thresh(p.value))
+
+cd4pd1_c1_c3.df <- facs.df %>%
+  filter(Timepoint != "Baseline") %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  dplyr::select(Patient, Timepoint, `CD4:PD-1`) %>%
+  spread(Timepoint, `CD4:PD-1`, fill = NA) %>%
+  with(wilcox.test(`Cycle 1`, `Cycle 3`, paired = T, exact = F, conf.int = T)) %>%
+  broom::tidy(.) %>% mutate(across(where(is.double), ~ signif(.x, digits = 2))) %>%
+  mutate(comparison = "Cycle 1 v Cycle 3") %>%
+  mutate(p.value2 = p_label_thresh(p.value))
+
+cd4pd1_tc.p <- timecourse.df %>%
+  ggplot(aes(x = Timepoint2, y = `CD4:PD-1`, fill = Timepoint2)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 65), breaks = seq(from = 0, to = 60, by = 20)) +
+  scale_fill_manual(values = c("#fbb4b9", "#f768a1", "#c51b8a")) +
+  scale_x_discrete(labels = timecourse_n.df$labs) +
+  labs(x = "", y = "% CD4+ PD-1+") +
+  ggsignif::geom_signif(comparisons = list(c("RT-", "RT+"), c("RT+", "C3")), margin_top = 0.1, textsize = 3.0, vjust = -0.2, step_increase = 0.15, annotations = c(cd4pd1_bl_c1.df$p.value2, cd4pd1_c1_c3.df$p.value2), parse = T) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+cd4pd1_tc.p 
+
+bind_rows(cd4pd1_bl_c1.df, cd4pd1_c1_c3.df)
+
+```
+
+### (C) Tpex
+
+```{r fig.height=4, fig.width=5.5}
+
+cb_all.df <- facs.df %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  mutate(Clinical_Benefit = factor(Clinical_Benefit, levels = c("Y", "N"))) %>%
+  mutate(Timepoint2 = case_when(Timepoint == "Baseline" ~ "RT-",
+                                 Timepoint == "Cycle 1" ~ "RT+",
+                                 Timepoint == "Cycle 3" ~ "C3",
+                                 TRUE ~ NA_character_))
+
+cb_tp_n.df <- cb_all.df %>%
+  group_by(Clinical_Benefit, Timepoint2) %>%
+  tally %>%
+  mutate(Clinical_Benefit_cycn = paste(Clinical_Benefit, "\n(", n, ")", sep = "")) %>%
+  ungroup %>%
+  group_by(Timepoint2) %>%
+  arrange(Clinical_Benefit, .by_group = T)
+
+# Shared x-axis labels across timepoints (defined once, reused in D and E)
+baseline_labs <- cb_tp_n.df %>% filter(Timepoint2 == "RT-") %>% pull(Clinical_Benefit_cycn)
+C1_labs       <- cb_tp_n.df %>% filter(Timepoint2 == "RT+") %>% pull(Clinical_Benefit_cycn)
+C3_labs       <- cb_tp_n.df %>% filter(Timepoint2 == "C3")  %>% pull(Clinical_Benefit_cycn)
+
+tpex_bl.p <- cb_all.df %>%
+  filter(Timepoint == "Baseline") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:PD1+ TCF1+ (Tpex)`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 60), breaks = seq(from = 0, to = 60, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = baseline_labs) +
+  labs(x = "", y = "% CD8+PD-1+TCF1+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 50) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+tpex_c1.p <- cb_all.df %>%
+  filter(Timepoint == "Cycle 1") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:PD1+ TCF1+ (Tpex)`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 60), breaks = seq(from = 0, to = 60, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = C1_labs) +
+  labs(x = "", y = "% CD8+PD-1+TCF1+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 50) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+tpex_c3.p <- cb_all.df %>%
+  filter(Timepoint == "Cycle 3") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:PD1+ TCF1+ (Tpex)`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 60), breaks = seq(from = 0, to = 60, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = C3_labs) +
+  labs(x = "", y = "% CD8+PD-1+TCF1+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 50) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10),
+        plot.margin = margin(r = 20))
+
+tpex_all.p <- (tpex_bl.p | tpex_c1.p | tpex_c3.p) +
+  plot_layout(guides = "collect", axes = "collect")
+
+tpex_all.p 
+
+cb_all.df %>%
+  group_by(Timepoint) %>%
+  summarize(test = list(wilcox.test(`CD8:PD1+ TCF1+ (Tpex)` ~ Clinical_Benefit, exact = F, data = cur_data(), conf.int = T))) %>%
+  mutate(tidy_test = purrr::map(test, broom::tidy)) %>%
+  unnest(tidy_test) %>%
+  ungroup() %>%
+  select(-test) %>%
+  mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+```
+
+### (D) CD8 EOMES
+
+```{r fig.height=4, fig.width=5}
+
+cd8eomes_bl.p <- cb_all.df %>%
+  filter(Timepoint == "Baseline") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 105), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = baseline_labs) +
+  labs(x = "", y = "% CD8+ EOMES+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 95) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+cd8eomes_c1.p <- cb_all.df %>%
+  filter(Timepoint == "Cycle 1") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 105), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = C1_labs) +
+  labs(x = "", y = "% CD8+ EOMES+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 95) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+cd8eomes_c3.p <- cb_all.df %>%
+  filter(Timepoint == "Cycle 3") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD8:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 105), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = C3_labs) +
+  labs(x = "", y = "% CD8+ EOMES+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 95) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10),
+        plot.margin = margin(r = 20))
+
+cd8eomes_all.p <- (cd8eomes_bl.p | cd8eomes_c1.p | cd8eomes_c3.p) +
+  plot_layout(guides = "collect", axes = "collect")
+
+
+cd8eomes_all.p
+
+cb_all.df %>%
+  group_by(Timepoint) %>%
+  summarize(test = list(wilcox.test(`CD8:EOMES` ~ Clinical_Benefit, exact = F, data = cur_data(), conf.int = T))) %>%
+  mutate(tidy_test = purrr::map(test, broom::tidy)) %>%
+  unnest(tidy_test) %>%
+  ungroup() %>%
+  select(-test) %>%
+  mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+
+```
+
+### (E) CD4 EOMES
+
+```{r fig.height=4, fig.width=5}
+
+cd4eomes_bl.p <- cb_all.df %>%
+  filter(Timepoint == "Baseline") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD4:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 60), breaks = seq(from = 0, to = 60, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = baseline_labs) +
+  labs(x = "", y = "% CD4+ EOMES+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 52) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+cd4eomes_c1.p <- cb_all.df %>%
+  filter(Timepoint == "Cycle 1") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD4:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 60), breaks = seq(from = 0, to = 60, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = C1_labs) +
+  labs(x = "", y = "% CD4+ EOMES+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 52) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+cd4eomes_c3.p <- cb_all.df %>%
+  filter(Timepoint == "Cycle 3") %>%
+  ggplot(aes(x = Clinical_Benefit, y = `CD4:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 60), breaks = seq(from = 0, to = 60, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_x_discrete(labels = C3_labs) +
+  labs(x = "", y = "% CD4+ EOMES+") +
+  ggsignif::geom_signif(comparisons = list(c("Y", "N")), margin_top = 0, vjust = -0.2, textsize = 3.0, test.args = list(exact = F), y_position = 52) +
+  facet_wrap(~Timepoint2) +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 10),
+        strip.text.x = element_text(face = "bold", size = 10),
+        plot.margin = margin(r = 20))
+
+cd4eomes_all.p <- (cd4eomes_bl.p | cd4eomes_c1.p | cd4eomes_c3.p) +
+  plot_layout(guides = "collect", axes = "collect")
+
+cd4eomes_all.p 
+
+cb_all.df %>%
+  group_by(Timepoint) %>%
+  summarize(test = list(wilcox.test(`CD4:EOMES` ~ Clinical_Benefit, exact = F, data = cur_data(), conf.int = T))) %>%
+  mutate(tidy_test = purrr::map(test, broom::tidy)) %>%
+  unnest(tidy_test) %>%
+  ungroup() %>%
+  select(-test) %>%
+  mutate(across(where(is.double), ~ signif(.x, digits = 2)))
+
+
+```
+
+### Fig 4 layout
+
+```{r fig.height=6, fig.width=10}
+
+fig4_row1 <- ((cd8pd1_tc.p * theme(plot.margin = unit(c(0, 10, 0, 10), "pt"))) | cd4pd1_tc.p | tpex_all.p) +
+  plot_layout(widths = c(2, 2, 5)) + plot_annotation(tag_levels = list(c("A", "B", "C"))) & theme(plot.tag = element_text(face = "bold"))
+
+fig4_row2 <- (cowplot::ggdraw(cd8eomes_all.p) | cowplot::ggdraw(cd4eomes_all.p)) +
+  plot_annotation(tag_levels = list(c("D", "E"))) & theme(plot.tag = element_text(face = "bold"))
+
+cowplot::ggdraw(fig4_row1) / cowplot::ggdraw(fig4_row2)
+
+```
+
+## Figire S4 (By Treatment Arm)
+
+### (A) CD3
+
+```{r fig.height=3.5, fig.width=3}
+
+baseline_cb_trt_n.df <- baseline_cb.df %>%
+  group_by(Clinical_Benefit, Treatment) %>%
+  tally %>%
+  mutate(Clinical_Benefit_n = paste(Clinical_Benefit, "\n(", n, ")", sep = "")) %>%
+  mutate(Clinical_Benefit_n = factor(Clinical_Benefit_n, levels = Clinical_Benefit_n))
+
+s4_cd3_cb.p <- baseline_cb.df %>%
+  left_join(baseline_cb_trt_n.df) %>%
+  ggplot(aes(x = Clinical_Benefit_n, y = `T cells`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  labs(x = "", y = "% CD3+ cells") +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold"))
+
+s4_cd3_cb.p
+
+```
+
+### (B) CD8
+
+```{r fig.height=3.5, fig.width=3}
+
+s4_cd8_cb.p <- baseline_cb.df %>%
+  left_join(baseline_cb_trt_n.df) %>%
+  ggplot(aes(x = Clinical_Benefit_n, y = CD8, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD3+CD8+ cells") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold"))
+
+s4_cd8_cb.p 
+
+```
+
+### (C) CD4
+
+```{r fig.height=3.5, fig.width=3}
+
+s4_cd4_cb.p <- baseline_cb.df %>%
+  left_join(baseline_cb_trt_n.df) %>%
+  ggplot(aes(x = Clinical_Benefit_n, y = CD4, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD3+CD4+ cells") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold"))
+
+s4_cd4_cb.p
+
+```
+
+### (D) CD4:CD8
+
+```{r fig.height=3.5, fig.width=3}
+
+s4_ratio_cb.p <- baseline_cb.df %>%
+  left_join(baseline_cb_trt_n.df) %>%
+  ggplot(aes(x = Clinical_Benefit_n, y = `CD4:CD8`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = T, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "CD4:CD8", fill = "Clinical\nbenefit") +
+  guides(fill = guide_legend(override.aes = list(size = 4))) +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold"))
+
+s4_ratio_cb.p 
+
+```
+
+### (E) CD8 PD-1 by clinical benefit
+
+```{r fig.height=3, fig.width=3}
+
+s4_cd8pd1_cb.p <- baseline_cb.df %>%
+  left_join(baseline_cb_trt_n.df) %>%
+  ggplot(aes(x = Clinical_Benefit_n, y = `CD8:PD-1`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  labs(x = "", y = "% CD8+ PD-1+ cells") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold"))
+
+s4_cd8pd1_cb.p
+
+
+```
+
+### (F) CD4 PD-1 by clinical benefit
+
+```{r fig.height=3, fig.width=3}
+
+s4_cd4pd1_cb.p <- baseline_cb.df %>%
+  left_join(baseline_cb_trt_n.df) %>%
+  ggplot(aes(x = Clinical_Benefit_n, y = `CD4:PD-1`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  labs(x = "", y = "% CD4+ PD-1+ cells") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold"))
+
+s4_cd4pd1_cb.p
+
+```
+
+### (G) CD8 PD-1 by prior treatment
+
+```{r fig.height=3.5, fig.width=3}
+
+baseline_chemo_trt_n.df <- baseline_cb.df %>%
+  group_by(`Lines of chemo in metastatic setting`, Treatment) %>%
+  tally %>%
+  mutate(`Lines of chemo in metastatic setting n` = paste(`Lines of chemo in metastatic setting`, "\n(", n, ")", sep = "")) %>%
+  mutate(`Lines of chemo in metastatic setting n` = factor(`Lines of chemo in metastatic setting n`, levels = `Lines of chemo in metastatic setting n`))
+
+s4_cd8pd1_chemo.p <- baseline_cb.df %>%
+  left_join(baseline_chemo_trt_n.df) %>%
+  ggplot(aes(x = `Lines of chemo in metastatic setting n`, y = `CD8:PD-1`, fill = `Lines of chemo in metastatic setting`)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#5ab4ac", "#a6611a")) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  labs(x = "Prior treatment for\nadvanced disease", y = "% CD8+PD-1+") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        axis.title.x = element_text(margin = margin(t = 10)),
+        strip.text = element_text(face = "bold"))
+
+s4_cd8pd1_chemo.p
+
+
+```
+
+### (G) CD4 PD-1 by prior treatment
+
+```{r fig.height=3.5, fig.width=3}
+
+s4_cd4pd1_chemo.p <- baseline_cb.df %>%
+  left_join(baseline_chemo_trt_n.df) %>%
+  ggplot(aes(x = `Lines of chemo in metastatic setting n`, y = `CD4:PD-1`, fill = `Lines of chemo in metastatic setting`)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#5ab4ac", "#a6611a")) +
+  scale_y_continuous(limits = c(0, 55), breaks = seq(from = 0, to = 50, by = 10)) +
+  labs(x = "Prior treatment for\nadvanced disease", y = "% CD4+PD-1+") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        axis.title.x = element_text(margin = margin(t = 10)),
+        strip.text = element_text(face = "bold"))
+
+s4_cd4pd1_chemo.p
+
+```
+
+### Fig S4 layout
+
+```{r fig.height=6, fig.width=10}
+
+figs4_row1 <- (s4_cd3_cb.p | s4_cd8_cb.p | s4_cd4_cb.p) * theme(plot.margin = unit(c(0, 20, 0, 0), "pt")) | s4_ratio_cb.p
+
+figs4_row1 <- figs4_row1 + plot_annotation(tag_levels = "A") & theme(plot.tag = element_text(face = "bold"))
+
+figs4_row2_pd1 <- (s4_cd8pd1_cb.p | s4_cd4pd1_cb.p)
+
+figs4_chemo_block <- cowplot::ggdraw(((s4_cd8pd1_chemo.p | s4_cd4pd1_chemo.p) * theme(axis.title.x = element_blank(), plot.margin = margin(t = 0, l = 20, b = 5)))) +
+  cowplot::draw_label("Prior treatment for advanced disease",
+             x = 0.58, y = -0.1, vjust = 1, fontface = "bold", size = 10)
+
+figs4_row2 <- (figs4_row2_pd1 | figs4_chemo_block) +
+  plot_layout(widths = c(2, 2, 5)) + plot_annotation(tag_levels = list(c("E", "F", " G"))) & theme(plot.tag = element_text(face = "bold"))
+
+cowplot::ggdraw(figs4_row1) / cowplot::ggdraw(figs4_row2)
+
+```
+
+## Figure S5 (By Treatment Arm)
+
+### (A) CD8 PD-1 timecourse by treatment
+
+```{r fig.height=3.5, fig.width=4, message=FALSE, warning=FALSE}
+
+timecourse_trt_n.df <- timecourse.df %>%
+  group_by(Timepoint2, Timepoint, Treatment) %>%
+  tally %>%
+  mutate(labs = paste(Timepoint2, "\n(", n, ")", sep = "")) %>%
+  mutate(labs = factor(labs, levels = unique(labs)))
+
+s5_cd8pd1_tc.p <- facs.df %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  left_join(timecourse_trt_n.df) %>%
+  ggplot(aes(x = labs, y = `CD8:PD-1`, fill = Timepoint)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_fill_manual(values = c("#fbb4b9", "#f768a1", "#c51b8a", "white")) +
+  labs(x = "", y = "% CD8+PD-1+") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+s5_cd8pd1_tc.p
+```
+
+### (B) CD4 PD-1 timecourse by treatment
+
+```{r fig.height=3.5, fig.width=4, message=FALSE, warning=FALSE}
+
+s5_cd4pd1_tc.p <- facs.df %>%
+  filter(Patient %in% baseline_cb.df$Patient) %>%
+  left_join(timecourse_trt_n.df) %>%
+  ggplot(aes(x = labs, y = `CD4:PD-1`, fill = Timepoint)) +
+  ggdist::geom_dots(layout = "weave", binwidth = grid::unit(c(1.5), "mm"), overflow = "compress", side = "both", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_fill_manual(values = c("#fbb4b9", "#f768a1", "#c51b8a", "white")) +
+  labs(x = "", y = "% CD4+PD-1+") +
+  facet_wrap(~Treatment, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text.x = element_text(face = "bold", size = 10))
+
+
+s5_cd4pd1_tc.p 
+
+```
+
+### (C) Tpex by treatment
+
+```{r fig.height=5, fig.width=5}
+
+cb_tp_trt_n.df <- cb_all.df %>%
+  group_by(Clinical_Benefit, Timepoint2, Treatment, Timepoint) %>%
+  tally %>%
+  mutate(Clinical_Benefit_cycn = paste(Clinical_Benefit, "\n(", n, ")", sep = "")) %>%
+  ungroup %>%
+  group_by(Treatment) %>%
+  arrange(Clinical_Benefit, .by_group = T) %>%
+  ungroup %>%
+  mutate(Clinical_Benefit_cycn = factor(Clinical_Benefit_cycn, levels = sort(unique(Clinical_Benefit_cycn), decreasing = T))) %>%
+  mutate(Timepoint2k = factor(Timepoint2, levels = c("RT-", "RT+", "C3")))
+
+s5_tpex_20gy.p <- cb_all.df %>%
+  left_join(cb_tp_trt_n.df) %>%
+  filter(Treatment == "20Gy") %>%
+  ggplot(aes(x = Clinical_Benefit_cycn, y = `CD8:PD1+ TCF1+ (Tpex)`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD8+ PD-1+ TCF1+") +
+  facet_grid(Treatment ~ Timepoint2k, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold", size = 10))
+
+s5_tpex_24gy.p <- cb_all.df %>%
+  left_join(cb_tp_trt_n.df) %>%
+  filter(Treatment == "24Gy") %>%
+  ggplot(aes(x = Clinical_Benefit_cycn, y = `CD8:PD1+ TCF1+ (Tpex)`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD8+ PD-1+ TCF1+") +
+  facet_grid(Treatment ~ Timepoint2k, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold", size = 10))
+
+s5_tpex.p <- s5_tpex_20gy.p / s5_tpex_24gy.p
+
+s5_tpex.p
+
+```
+
+### (D) CD8 EOMES by treatment
+
+```{r fig.height=5, fig.width=5}
+
+s5_cd8eomes_20gy.p <- cb_all.df %>%
+  left_join(cb_tp_trt_n.df) %>%
+  filter(Treatment == "20Gy") %>%
+  ggplot(aes(x = Clinical_Benefit_cycn, y = `CD8:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD8+ EOMES+") +
+  facet_grid(Treatment ~ Timepoint2k, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold", size = 10))
+
+s5_cd8eomes_24gy.p <- cb_all.df %>%
+  left_join(cb_tp_trt_n.df) %>%
+  filter(Treatment == "24Gy") %>%
+  ggplot(aes(x = Clinical_Benefit_cycn, y = `CD8:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 100), breaks = seq(from = 0, to = 100, by = 20)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD8+ EOMES+") +
+  facet_grid(Treatment ~ Timepoint2k, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold", size = 10))
+
+s5_cd8eomes.p <- s5_cd8eomes_20gy.p / s5_cd8eomes_24gy.p
+
+s5_cd8eomes.p
+
+```
+
+### (E) CD4 EOMES by treatment
+
+```{r fig.height=5, fig.width=5}
+
+s5_cd4eomes_20gy.p <- cb_all.df %>%
+  left_join(cb_tp_trt_n.df) %>%
+  filter(Treatment == "20Gy") %>%
+  ggplot(aes(x = Clinical_Benefit_cycn, y = `CD4:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD4+ EOMES+") +
+  facet_grid(Treatment ~ Timepoint2k, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold", size = 10))
+
+s5_cd4eomes_24gy.p <- cb_all.df %>%
+  left_join(cb_tp_trt_n.df) %>%
+  filter(Treatment == "24Gy") %>%
+  ggplot(aes(x = Clinical_Benefit_cycn, y = `CD4:EOMES`, fill = Clinical_Benefit)) +
+  ggdist::geom_dots(layout = "weave",
+                    binwidth = grid::unit(c(1.5), "mm"),
+                    side = "both", overflow = "compress", show.legend = F, linewidth = 0.3, colour = "grey50") +
+  stat_summary(fun = median, geom = "crossbar", width = 0.5, fatten = 1.5, color = "black", show.legend = F) +
+  scale_y_continuous(limits = c(0, 50), breaks = seq(from = 0, to = 50, by = 10)) +
+  scale_fill_manual(values = c("#b2abd2", "#fdb863")) +
+  labs(x = "", y = "% CD4+ EOMES+") +
+  facet_grid(Treatment ~ Timepoint2k, scales = "free_x") +
+  theme_classic() +
+  theme(axis.text = element_text(size = 8, colour = "black"),
+        axis.title = element_text(face = "bold", size = 8),
+        strip.text = element_text(face = "bold", size = 10))
+
+s5_cd4eomes.p <- s5_cd4eomes_20gy.p / s5_cd4eomes_24gy.p
+
+s5_cd4eomes.p
+
+```
+
+### Fig S5 layout
+
+```{r fig.height=8, fig.width=10}
+
+figs5_row1 <- (s5_cd8pd1_tc.p * theme(plot.margin = unit(c(0, 30, 0, 30), "pt")) | s5_cd4pd1_tc.p) +
+  plot_annotation(tag_levels = list(c("A", "B"))) & theme(plot.tag = element_text(face = "bold"))
+
+figs5_row2 <- (cowplot::ggdraw(s5_tpex.p) | cowplot::ggdraw(s5_cd8eomes.p) | cowplot::ggdraw(s5_cd4eomes.p)) +
+  plot_annotation(tag_levels = list(c("C", "D", "E"))) & theme(plot.tag = element_text(face = "bold"))
+
+cowplot::ggdraw(figs5_row1) / cowplot::ggdraw(figs5_row2) + plot_layout(heights = c(3, 5))
+
+```
+
+## Tumour TILs and clinical benefit analysis
+
+```{r message=FALSE, warning=FALSE}
+
+facs_tils.df <- baseline_cb.df %>%
+  mutate(TILs = as.numeric(`Tumour TILs`)) %>%
+  filter(!is.na(TILs)) %>%
+  mutate(CBF = factor(Clinical_Benefit, levels = c("N", "Y"))) %>%
+  dplyr::select(Patient, TILs, CBF, Clinical_Benefit)
+
+# ROC analysis (DeLong test via pROC)
+proc_obj <- facs_tils.df %>%
+  mutate(CBF2 = as.numeric(CBF)) %$%
+  roc(CBF2, TILs)
+
+pred <- facs_tils.df %$%
+  ROCR::prediction(TILs, CBF)
+
+# Performance: ROC
+perf <- ROCR::performance(pred, "tpr", "fpr")
+
+# Compute AUC
+auc <- ROCR::performance(pred, "auc")@y.values[[1]]
+
+# confidence intervals
+ci <- pROC::ci.auc(proc_obj)
+
+cat("ROC TILs for Clinical Benefit AUC ")
+auc
+ci
+
+# Logistic regression
+fit <- facs_tils.df %>%
+  mutate(TILs_1 = TILs / 10) %>%
+  mutate(CBFLR = as.numeric(CBF) - 1) %$%
+  glm(CBFLR ~ TILs_1, family = binomial)
+
+# significance
+summary(fit)
+
+# Odds ratio with confidence intervals
+exp(cbind(OR = coef(fit), confint(fit)))
+
+```
+
+<br>
+<br>
+<br>
+
+## Session info
+```{r session-info, echo = TRUE, collapse = TRUE}
+sessionInfo()
+```
+

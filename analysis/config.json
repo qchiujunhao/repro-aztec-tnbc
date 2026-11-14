@@ -1,0 +1,35 @@
+{
+  "format": "analysis-graph/0.1",
+  "project": {
+    "name": "AZTEC translational biomarkers: reproduction",
+    "description": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?"
+  },
+  "watch": [
+    "."
+  ],
+  "exclude": [
+    ".git",
+    ".hg",
+    ".svn",
+    "node_modules",
+    ".venv",
+    "venv",
+    "env",
+    "__pycache__",
+    ".ipynb_checkpoints",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".tox",
+    ".DS_Store",
+    "site",
+    ".cache"
+  ],
+  "observe": {
+    "enabled": true
+  },
+  "style": {
+    "enabled": true,
+    "verbs": []
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "method": {
+    "title": "AZTEC translational biomarkers: reproduction",
+    "question": "Do Figures 3 and 4 and Supplementary Figures S4 and S5 of the AZTEC trial (Nat Commun 2026, 10.1038/s41467-026-75660-y) regenerate from the deposited Rmd and source data (Zenodo 10.5281/zenodo.20345790)?",
+    "findings": [
+      "Figure 3, the TILs ROC and the logistic model reproduce exactly from the deposited Rmd and source data",
+      "Figure 4 and S5 differ: the deposited data give 42 Cycle 1 patients in the clinical-benefit set, the authors' rendering shows 43, so every Cycle 1 p-value shifts"
+    ]
+  },
+  "inputs": [],
+  "run": "bash run.sh",
+  "results_dir": "figures",
+  "steps": [
+    {
+      "id": "run-rscript-1",
+      "title": "Run Rscript",
+      "script": "Rscript -e 'knitr::opts_chunk$set(fig.path=\"figures/knit-\"); knitr::knit(\"AZTEC_translational_biomarkers.Rmd\", output=\"AZTEC_translational_biomarkers.md\", quiet=TRUE)'",
+      "produces": [
+        "AZTEC_translational_biomarkers.md",
+        "figures/knit-unnamed-chunk-10-1.png",
+        "figures/knit-unnamed-chunk-11-1.png",
+        "figures/knit-unnamed-chunk-12-1.png",
+        "figures/knit-unnamed-chunk-13-1.png",
+        "figures/knit-unnamed-chunk-14-1.png",
+        "figures/knit-unnamed-chunk-15-1.png",
+        "figures/knit-unnamed-chunk-16-1.png",
+        "figures/knit-unnamed-chunk-17-1.png",
+        "figures/knit-unnamed-chunk-18-1.png",
+        "figures/knit-unnamed-chunk-19-1.png",
+        "figures/knit-unnamed-chunk-2-1.png",
+        "figures/knit-unnamed-chunk-20-1.png",
+        "figures/knit-unnamed-chunk-21-1.png",
+        "figures/knit-unnamed-chunk-22-1.png",
+        "figures/knit-unnamed-chunk-23-1.png",
+        "figures/knit-unnamed-chunk-24-1.png",
+        "figures/knit-unnamed-chunk-25-1.png",
+        "figures/knit-unnamed-chunk-26-1.png",
+        "figures/knit-unnamed-chunk-27-1.png",
+        "figures/knit-unnamed-chunk-28-1.png",
+        "figures/knit-unnamed-chunk-29-1.png",
+        "figures/knit-unnamed-chunk-3-1.png",
+        "figures/knit-unnamed-chunk-30-1.png",
+        "figures/knit-unnamed-chunk-31-1.png",
+        "figures/knit-unnamed-chunk-4-1.png",
+        "figures/knit-unnamed-chunk-5-1.png",
+        "figures/knit-unnamed-chunk-6-1.png",
+        "figures/knit-unnamed-chunk-7-1.png",
+        "figures/knit-unnamed-chunk-8-1.png",
+        "figures/knit-unnamed-chunk-9-1.png"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "path": "AZTEC_translational_biomarkers.md",
+      "compare": "exact"
+    },
+    {
+      "path": "knit-unnamed-chunk-10-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-11-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-12-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-13-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-14-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-15-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-16-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-17-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-18-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-19-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-2-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-20-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-21-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-22-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-23-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-24-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-25-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-26-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-27-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-28-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-29-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-3-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-30-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-31-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-4-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-5-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-6-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-7-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-8-1.png",
+      "compare": "exists"
+    },
+    {
+      "path": "knit-unnamed-chunk-9-1.png",
+      "compare": "exists"
+    }
+  ],
+  "generated": "whatran 0.4.0 0a8423576d90"
+}
